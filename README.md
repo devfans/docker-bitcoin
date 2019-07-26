@@ -24,8 +24,8 @@ Bitcoin Core is a reference client that implements the Bitcoin protocol for remo
 The first way is to pass bitcoind parameters in the command line
 
 ```
-docke run -d --name bitcoin devfans/bitcoin -testnet -rpcuser=xx -rpcpassword=xxx
-docker exec -it bitcoin bitcoin-cli -rpcuser=xx -rpcpassword=xxx getwalletinfo
+docke run -d --name bitcoin-server devfans/bitcoin -testnet -rpcuser=xx -rpcpassword=xxx
+docker exec -it bitcoin-server bitcoin-cli -rpcuser=xx -rpcpassword=xxx getwalletinfo
 ```
 
 _Note: default entrypoint is `bitcoind -server`, default extra paramters (if no other paramters are specified)_:
@@ -42,7 +42,7 @@ rpcuser=bitcoinrpc
 #   $ strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo
 rpcpassword=xxxxxxxxxxxxxxxxxxxxxxxxxx
 rpcthreads=4
-
+rpcbind=0.0.0.0
 rpcallowip=172.16.0.0/16
 rpcallowip=192.168.0.0/16
 rpcallowip=10.0.0.0/8
@@ -55,10 +55,13 @@ blockmaxweight=4000000
 ```
 
 ```
-docker run -d -v /data/bitcoin:/root/.bitcoin -p 8332:8332 -rpcallow=172.17.0.0/16 --name bitcoin devfans/bitcoin -conf=bitcoin.conf
-docker exec -it bitcoin bitcoin-cli getbalance
-```
+docker run -d -v /data/bitcoin:/root/.bitcoin -p 8332:8332 \
+   --name bitcoin-server devfans/bitcoin -conf=bitcoin.conf
+docker exec -it bitcoin-server bitcoin-cli getbalance
 
+curl -u bitcoinrpc:xxxxxxxxxxxxxxxxxxxxxxxxxx --data-binary '{"jsonrpc":"1.0","id":"1","method":"getblockchaininfo","params":[]}' http://127.0.0.1:8332
+
+```
 
 _Note: [learn more](#using-rpcauth-for-remote-authentication) about how `-rpcauth` works for remote authentication._
 You can optionally create a service using `docker-compose`:
@@ -67,7 +70,7 @@ You can optionally create a service using `docker-compose`:
 bitcoin-core:
   image: devfans/bitcoin
   command:
-    -regtest=1
+    -testnet
 ```
 
 ### Using RPC to interact with the daemon
@@ -84,8 +87,7 @@ Start by launch the Bitcoin Core daemon:
 
 ```sh
 ❯ docker run --rm --name bitcoin-server -it devfans/bitcoin bitcoin
-  -printtoconsole \
-  -regtest=1
+  -testnet
 ```
 
 Then, inside the running `bitcoin-server` container, locally execute the query to the daemon using `bitcoin-cli`:
@@ -131,7 +133,8 @@ Now that you have your credentials, you need to start the Bitcoin Core daemon wi
 
 ```sh
 ❯ docker run --rm --name bitcoin-server -it devfans/bitcoin \
-  -regtest=1 \
+  -testnet \
+  -rpcbind=0.0.0.0 \
   -rpcallowip=172.17.0.0/16 \
   -rpcauth='foo:7d9ba5ae63c3d4dc30583ff4fe65a67e$9e3634e81c11659e3de036d0bf88f89cd169c1039e6e09607562d54765c649cc'
 ```
@@ -176,6 +179,7 @@ docker run --rm -it \
   -p 18443:18443 \
   -p 18444:18444 \
   devfans/bitcoin \
+  -rpcbind=0.0.0.0 \
   -rpcallowip=172.17.0.0/16 \
   -rpcauth='foo:7d9ba5ae63c3d4dc30583ff4fe65a67e$9e3634e81c11659e3de036d0bf88f89cd169c1039e6e09607562d54765c649cc'
 ```
