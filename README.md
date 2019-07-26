@@ -2,7 +2,7 @@
 
 bitcoin-core docker image
 
-[![devfans/bitcoin][docker-pulls-image]][docker-hub-url] [![devfans/bitcoin][docker-stars-image]][docker-hub-url] [![devfans/bitcoin][docker-size-image]][docker-hub-url] [![devfans/bitcoin][docker-layers-image]][docker-hub-url]
+[![devfans/bitcoin][docker-pulls-image]][docker-hub-url] [![devfans/bitcoin][docker-stars-image]][docker-hub-url]
 
 ## Tags
 
@@ -28,12 +28,12 @@ docke run -d --name bitcoin devfans/bitcoin -testnet -rpcuser=xx -rpcpassword=xx
 docker exec -it bitcoin bitcoin-cli -rpcuser=xx -rpcpassword=xxx getwalletinfo
 ```
 
-_Note: default entrypoint is `bitcoind -server`, default extra paramters (if no other paramters are specified):
+_Note: default entrypoint is `bitcoind -server`, default extra paramters (if no other paramters are specified)_:
 ```
 CMD ["-rpcuser=bit", "-rpcpassword=lkef5b389aa2xnf48b4500c81656", "-zmqpubhashtx=tcp://127.0.0.1:8331", "--rpcport=8332", "-listen=0"]
 ```
 
-The second way is save the configuation into `bitcoin.conf`
+The second way is to save the configuation into `bitcoin.conf`
 
 /data/bitcoin/bitcoin.conf
 ```
@@ -129,11 +129,8 @@ Note that for each run, even if the username remains the same, the output will b
 
 Now that you have your credentials, you need to start the Bitcoin Core daemon with the `-rpcauth` option. Alternatively, you could append the line to a `bitcoin.conf` file and mount it on the container.
 
-Let's opt for the Docker way:
-
 ```sh
 ❯ docker run --rm --name bitcoin-server -it devfans/bitcoin \
-  -printtoconsole \
   -regtest=1 \
   -rpcallowip=172.17.0.0/16 \
   -rpcauth='foo:7d9ba5ae63c3d4dc30583ff4fe65a67e$9e3634e81c11659e3de036d0bf88f89cd169c1039e6e09607562d54765c649cc'
@@ -151,8 +148,6 @@ To avoid any confusion about whether or not a remote call is being made, let's s
 ```sh
 ❯ docker run -it --link bitcoin-server --rm devfans/bitcoin \
   bitcoin-cli \
-  -rpcconnect=bitcoin-server \
-  -regtest \
   -rpcuser=foo\
   -stdinrpcpass \
   getbalance
@@ -181,8 +176,6 @@ docker run --rm -it \
   -p 18443:18443 \
   -p 18444:18444 \
   devfans/bitcoin \
-  -printtoconsole \
-  -regtest=1 \
   -rpcallowip=172.17.0.0/16 \
   -rpcauth='foo:7d9ba5ae63c3d4dc30583ff4fe65a67e$9e3634e81c11659e3de036d0bf88f89cd169c1039e6e09607562d54765c649cc'
 ```
