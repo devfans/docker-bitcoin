@@ -55,7 +55,7 @@ blockmaxweight=4000000
 ```
 
 ```
-docker run -d -v /data/bitcoin:/root/.bitcoin -p 8332:8332 -rpcallow=172.17.0.0/16 --name bitcoin devfans/bitcoin bitcoind
+docker run -d -v /data/bitcoin:/root/.bitcoin -p 8332:8332 -rpcallow=172.17.0.0/16 --name bitcoin devfans/bitcoin -conf=bitcoin.conf
 docker exec -it bitcoin bitcoin-cli getbalance
 ```
 
