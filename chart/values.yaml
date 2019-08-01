@@ -1,0 +1,30 @@
+image:
+  repository: devfans/bitcoin
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: Always
+
+path: /
+port: 8332
+probePath: /
+
+listenPort: 8332
+zmqPort: 8334
+host: "bitcoin-server"
+
+serviceType: ClusterIP
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+
+persistence:
+  enabled: true
+  # storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  size: 320Gi
+  # annotations: {}
+  # subPath: ""
+  # existingClaim:

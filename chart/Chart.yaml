@@ -1,0 +1,12 @@
+name: bitcoin-server
+version: 0.0.1
+appVersion: 0.0.1
+description: bitcoind 
+keywords:
+- bitcoin
+home: https://github.com/devfans/docker-bitcoin
+icon: ''
+maintainers:
+- name: stefan
+  email: stefanliu@outlook.com
+engine: gotpl

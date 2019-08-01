@@ -1,0 +1,56 @@
+{{- if include "app.host" . -}}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels:
+    app: {{ template "app.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+      release: "{{ .Release.Name }}"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+      {{- end }}
+      volumes:
+        - name: storage
+      {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "app.fullname" .) }}
+      {{- else }}
+          emptyDir: {}
+      {{- end -}}
+      containers:
+      - name: {{ template "app.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command: ["-rpcbind=0.0.0.0", "-listen=0", "-rpcallowip=172.16.0.0/12", "-rpcallowip=10.0.0.0/8", "-rpcpassword=Efx83hxkje038Sx374g8f78gxi", "-rpcuser=bit", "-zmqpubhashtx=tcp://127.0.0.1:8331", "-rpcport=8332"]
+        volumeMounts:
+          - name: storage
+              mountPath: "/root/.bitcoin"
+{{- if .Values.persistence.subPath }}
+              subPath: {{ .Values.persistence.subPath }}
+{{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.listenPort }}
+        - name: zmq
+          containerPort: {{ .Values.zmqPort }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+{{- end -}}

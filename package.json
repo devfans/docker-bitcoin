@@ -1,0 +1,15 @@
+{
+  "name": "bitcoind",
+  "version": "0.0.1",
+  "description": "bitcoind of bitcoin core",
+  "deploy": {
+    "images": [],
+    "charts": [
+      {
+        "path": "chart",
+        "values": "values.yaml",
+        "release": "bitcoin-server"
+      }
+    ]
+  }
+}

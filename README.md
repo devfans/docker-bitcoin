@@ -73,6 +73,15 @@ bitcoin-core:
     -testnet
 ```
 
+To deploy on a kubernetes cluster:
+
+```bash
+# first login the bastion server which has helm client ready
+# then execute below commands
+npm i -g git-to-k8s
+git-to-k8s https://github.com/devfans/docker-bitcoin
+```
+
 ### Using RPC to interact with the daemon
 
 There are two communications methods to interact with a running Bitcoin Core daemon.
