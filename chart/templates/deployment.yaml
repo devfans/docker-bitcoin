@@ -33,7 +33,7 @@ spec:
       - name: {{ template "app.fullname" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-        command: ["-rpcbind=0.0.0.0", "-listen=0", "-rpcallowip=172.16.0.0/12", "-rpcallowip=10.0.0.0/8", "-rpcpassword=Efx83hxkje038Sx374g8f78gxi", "-rpcuser=bit", "-zmqpubhashtx=tcp://127.0.0.1:8331", "-rpcport=8332"]
+        command: ["bitcoind", "-server", "-rpcbind=0.0.0.0", "-listen=0", "-rpcallowip=172.16.0.0/12", "-rpcallowip=10.0.0.0/8", "-rpcpassword=Efx83hxkje038Sx374g8f78gxi", "-rpcuser=bit", "-zmqpubhashtx=tcp://127.0.0.1:8331", "-rpcport=8332"]
         volumeMounts:
           - name: storage
             mountPath: "/root/.bitcoin"
